@@ -240,19 +240,22 @@
   .rail-btn:hover { border-color: var(--accent-line); background: var(--accent-tint); color: var(--accent); }
   .rail-btn:disabled { opacity: .35; cursor: default; background: var(--surface); border-color: var(--border); color: var(--text); }
   .rail-btn svg { width: 20px; height: 20px; }
-  .rail-outer { position: relative; }
+  .rail-outer { position: relative; max-width: 1080px; margin: 0 auto; padding: 0 24px; }
   .rail {
+    --fl: 0px; --fr: 56px;
     list-style: none; display: flex; gap: 18px; overflow-x: auto; overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory; scroll-behavior: smooth;
-    padding: 4px max(24px, calc((100vw - 1080px) / 2 + 24px)) 18px;
-    scroll-padding-inline: max(24px, calc((100vw - 1080px) / 2 + 24px));
-    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+    padding: 8px 2px 10px; scroll-padding-inline: 2px;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--fl), #000 calc(100% - var(--fr)), transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0, #000 var(--fl), #000 calc(100% - var(--fr)), transparent 100%);
   }
-  .rail::-webkit-scrollbar { height: 8px; }
-  .rail::-webkit-scrollbar-thumb { background: var(--border); border-radius: 8px; }
-  .rail:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: var(--radius); }
+  .rail-progress { height: 3px; margin: 14px 2px 0; background: var(--border-soft); border-radius: 3px; overflow: hidden; }
+  .rail-progress span { display: block; height: 100%; width: 30%; background: var(--accent); border-radius: 3px; transition: transform .15s linear; }
   .rail-card {
-    flex: 0 0 clamp(260px, 30vw, 340px); scroll-snap-align: start;
+    flex: 0 0 calc((100% - 36px) / 3); scroll-snap-align: start;
     background: var(--card); border: 1px solid var(--border-soft); border-radius: var(--radius); overflow: hidden;
     display: flex; flex-direction: column; transition: border-color .25s, transform .25s;
   }
@@ -283,7 +286,7 @@
   .train-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
 
   /* ---------- Talks ---------- */
-  .talks-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  .talks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
   .talk {
     display: flex; flex-direction: column;
     background: var(--card); border: 1px solid var(--border-soft); border-radius: var(--radius);
@@ -351,6 +354,8 @@
     nav .links { gap: 18px; }
   }
   @media (max-width: 900px) {
+    .talks-grid { grid-template-columns: 1fr; }
+    .rail-card { flex-basis: calc((100% - 18px) / 2); }
     nav .links { display: none; }
     .exp-card { grid-column: span 3; }
     .talk.featured { grid-template-columns: 1fr; }
@@ -373,6 +378,7 @@
     .about-photo { width: 140px; }
     .exp-grid, .work-grid, .talks-grid { grid-template-columns: 1fr; }
     .exp-card { grid-column: auto; }
+    .rail-card { flex-basis: 86%; }
     .contact-box { padding: 40px 24px; border-radius: 18px; }
   }
 </style>
@@ -528,6 +534,7 @@
         </a>
       </li>
     </ul>
+    <div class="rail-progress" aria-hidden="true"><span></span></div>
   </div>
   <div class="wrap">
     <div class="train-actions reveal">
@@ -546,7 +553,7 @@
       <div class="about-text">
         <div class="leader-name">Kamal Krishna Bhatt</div>
         <div class="leader-role">Software Engineer · Stuttgart</div>
-        <p>I'm a software engineer with 17+ years of hands-on experience designing and shipping production systems. Most recently that's agentic AI platforms, built during my current role at STORDIS GmbH; before that, network automation and management systems for telecom infrastructure, across STORDIS and earlier roles.</p>
+        <p>I'm a software engineer with 17+ years of hands-on experience designing and shipping production systems. Most recently that's agentic AI platforms, built in my current role; before that, network automation and management systems for telecom infrastructure.</p>
         <p>I work by one idea: a system is only as good as its worst day in production. That's why I give agents guardrails before I give them autonomy, and why I test automation tooling against failure, not just the happy path.</p>
         <div class="about-links">
           <a class="chip" href="https://www.linkedin.com/in/kamalkrishnabhatt/">
@@ -569,7 +576,7 @@
     <div class="reveal">
       <div class="label">03 / Expertise</div>
       <h2 class="section-title">Where the depth is</h2>
-      <p class="section-sub">Six areas of hands-on depth, each built through production work during my engineering roles, most recently at STORDIS GmbH, not through coursework or theory.</p>
+      <p class="section-sub">Six areas of hands-on depth, each built through production work in my engineering roles, not through coursework or theory.</p>
     </div>
     <div class="exp-grid">
       <article class="exp-card reveal">
@@ -656,9 +663,9 @@
 <section id="talks">
   <div class="wrap">
     <div class="reveal">
-      <div class="label">05 / Talks &amp; Appearances</div>
-      <h2 class="section-title">Talks, masterclasses &amp; interviews</h2>
-      <p class="section-sub">Conference talks at the Open Compute Project and CLOUDFEST, plus appearances as STORDIS's open networking and SONiC expert.</p>
+      <div class="label">05 / Talks</div>
+      <h2 class="section-title">Talks &amp; masterclasses</h2>
+      <p class="section-sub">Conference talks and masterclasses at the Open Compute Project and CLOUDFEST on open networking, SONiC and AI for infrastructure.</p>
     </div>
     <div class="talks-grid">
       <article class="talk featured reveal">
@@ -683,18 +690,6 @@
           <h3>Revolutionizing Open Networking: Monsoon 2.0, AI-Enhanced ORCA and Smart CLI for SONiC</h3>
           <p>Monsoon 2.0 (agentless gNMI telemetry with AI-driven anomaly detection), AI-enhanced ORCA orchestration, and Smart CLI, an LLM assistant for the SONiC NOS.</p>
           <div class="tags"><span class="tag">Agentic AI</span><span class="tag">gNMI</span><span class="tag">LLM</span></div>
-        </div>
-      </article>
-      <article class="talk reveal">
-        <div class="video-wrap" data-vid="Q1DSBJY_HH8" data-title="QuickTech Questions with Kamal Bhatt">
-          <img src="https://i.ytimg.com/vi/Q1DSBJY_HH8/hqdefault.jpg" alt="QuickTech Questions with Kamal Bhatt, video thumbnail" loading="lazy">
-          <button class="video-play-btn" type="button" aria-label="Play video: QuickTech Questions with Kamal Bhatt"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg></span></button>
-        </div>
-        <div class="talk-body">
-          <div class="talk-meta"><span class="yr">2024</span><span>STORDIS · Interview</span></div>
-          <h3>QuickTech Questions with Kamal Bhatt</h3>
-          <p>An interview on open networking, featured on the STORDIS YouTube channel as the company’s open networking and SONiC expert.</p>
-          <div class="tags"><span class="tag">Open networking</span><span class="tag">SONiC</span></div>
         </div>
       </article>
       <article class="talk reveal">
@@ -781,6 +776,16 @@
       var max = rail.scrollWidth - rail.clientWidth - 2;
       prev.disabled = rail.scrollLeft <= 2; next.disabled = rail.scrollLeft >= max;
       document.querySelector('.rail-nav').hidden = max <= 0;
+      // soft fade on the edge that still has more videos behind it
+      rail.style.setProperty('--fl', rail.scrollLeft > 2 ? '56px' : '0px');
+      rail.style.setProperty('--fr', rail.scrollLeft < max ? '56px' : '0px');
+      var bar = document.querySelector('.rail-progress'), thumb = bar && bar.firstElementChild;
+      if (thumb) {
+        bar.hidden = max <= 0;
+        var ratio = rail.clientWidth / rail.scrollWidth;
+        thumb.style.width = (ratio * 100) + '%';
+        thumb.style.transform = 'translateX(' + (max > 0 ? (rail.scrollLeft / max) * (1 / ratio - 1) * 100 : 0) + '%)';
+      }
     }
     [prev, next].forEach(function(b){ b.addEventListener('click', function(){ rail.scrollBy({ left: step() * +b.dataset.dir * (window.innerWidth > 720 ? 2 : 1) }); }); });
     rail.addEventListener('scroll', update, { passive: true });
