@@ -9,7 +9,7 @@
 <meta property="og:title" content="Bhatt Engineering · Kamal Krishna Bhatt">
 <meta property="og:description" content="AI agent systems and network automation, engineered to run in production.">
 <meta property="og:url" content="https://bhatt-engineering.com/">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2314110d'/%3E%3Cpath d='M20 12V52M20 30H36A11 11 0 0 1 36 52H20' fill='none' stroke='%23efe7d6' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='20' cy='12' r='5.5' fill='%23e8b04b'/%3E%3Ccircle cx='47' cy='41' r='5.5' fill='%23e8b04b'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2314110d'/%3E%3Cpath d='M18 6V52' fill='none' stroke='%23efe7d6' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M18 37H48A15 15 0 1 0 43.6 47.6' fill='none' stroke='%23e8b04b' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -57,7 +57,7 @@
   .logo svg { width: 34px; height: 34px; flex-shrink: 0; }
   .wordmark { font-size: 17px; letter-spacing: -0.02em; line-height: 1; }
   .wordmark b { font-weight: 700; }
-  .wordmark span { color: var(--muted); font-weight: 400; }
+  .wordmark span { color: var(--accent); font-weight: 400; }
 
   /* ---------- Nav ---------- */
   nav {
@@ -180,13 +180,18 @@
     background: var(--card); border: 1px solid var(--border-soft); border-radius: var(--radius);
     padding: 28px; transition: border-color .25s, transform .25s, background .25s;
   }
-  .exp-card:nth-child(4), .exp-card:nth-child(5) { grid-column: span 3; }
   .exp-card:hover { border-color: var(--accent-line); transform: translateY(-3px); background: #241e16; }
   .exp-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
   .exp-tag { font-family: var(--mono); font-size: 11.5px; letter-spacing: .08em; color: var(--accent); background: var(--accent-tint); padding: 4px 10px; border-radius: 6px; }
   .exp-num { font-family: var(--mono); font-size: 12px; color: var(--muted); }
   .exp-card h3 { font-size: 18px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.3; margin-bottom: 10px; }
-  .exp-card p { font-size: 14.5px; color: var(--muted); }
+  .exp-card { display: flex; flex-direction: column; }
+  .exp-card p { font-size: 14.5px; color: var(--muted); margin-bottom: 18px; }
+  .exp-proof {
+    margin-top: auto; padding-top: 14px; border-top: 1px dashed var(--border);
+    font-family: var(--mono); font-size: 12px; line-height: 1.5; color: var(--text-2);
+  }
+  .exp-proof::before { content: "proof › "; color: var(--accent); }
 
   /* ---------- Work ---------- */
   .work-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
@@ -223,17 +228,59 @@
 
   /* ---------- Trainings ---------- */
   #trainings { background: var(--bg-2); }
-  .train-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 40px; align-items: center; }
-  .player {
-    position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius);
-    overflow: hidden; background: #000; border: 1px solid var(--border);
-    box-shadow: 0 30px 80px -40px rgba(232,176,75,0.25);
+  .train-bar { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 24px; }
+  .train-topics { display: flex; flex-wrap: wrap; gap: 8px; }
+  .rail-nav { display: flex; gap: 8px; }
+  .rail-nav[hidden] { display: none; }
+  .rail-btn {
+    width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    transition: background .2s, border-color .2s, opacity .2s;
   }
-  .player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-  .train-text h3 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
-  .train-text p { font-size: 15.5px; color: var(--muted); margin-bottom: 18px; }
-  .train-topics { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
-  .train-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .rail-btn:hover { border-color: var(--accent-line); background: var(--accent-tint); color: var(--accent); }
+  .rail-btn:disabled { opacity: .35; cursor: default; background: var(--surface); border-color: var(--border); color: var(--text); }
+  .rail-btn svg { width: 20px; height: 20px; }
+  .rail-outer { position: relative; }
+  .rail {
+    list-style: none; display: flex; gap: 18px; overflow-x: auto; overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory; scroll-behavior: smooth;
+    padding: 4px max(24px, calc((100vw - 1080px) / 2 + 24px)) 18px;
+    scroll-padding-inline: max(24px, calc((100vw - 1080px) / 2 + 24px));
+    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  }
+  .rail::-webkit-scrollbar { height: 8px; }
+  .rail::-webkit-scrollbar-thumb { background: var(--border); border-radius: 8px; }
+  .rail:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .rail-card {
+    flex: 0 0 clamp(260px, 30vw, 340px); scroll-snap-align: start;
+    background: var(--card); border: 1px solid var(--border-soft); border-radius: var(--radius); overflow: hidden;
+    display: flex; flex-direction: column; transition: border-color .25s, transform .25s;
+  }
+  .rail-card:hover { border-color: var(--accent-line); transform: translateY(-3px); }
+  .rail-card:hover .video-wrap img { opacity: 1; transform: scale(1.03); }
+  .rail-card .video-play-btn span { width: 54px; height: 54px; }
+  .rail-badge {
+    position: absolute; top: 12px; left: 12px; z-index: 1; pointer-events: none;
+    font-family: var(--mono); font-size: 11.5px; color: var(--accent-ink); background: var(--accent);
+    padding: 4px 9px; border-radius: 6px;
+  }
+  .rail-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 6px; }
+  .rail-body h3 {
+    font-size: 15.5px; font-weight: 600; line-height: 1.35; letter-spacing: -0.01em;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .rail-body time { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .rail-more a {
+    flex: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 10px;
+    padding: 28px; min-height: 100%; color: var(--text);
+  }
+  .rail-more { background: var(--surface); border-style: dashed; border-color: var(--border); }
+  .rail-more strong { font-size: 19px; letter-spacing: -0.015em; }
+  .rail-more span:last-child { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 12.5px; color: var(--accent); }
+  .rail-more span:last-child svg { width: 14px; height: 14px; }
+  .more-icon { width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; background: var(--accent-tint); color: var(--accent); }
+  .more-icon svg { width: 24px; height: 24px; }
+  .train-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
 
   /* ---------- Talks ---------- */
   .talks-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
@@ -305,9 +352,7 @@
   }
   @media (max-width: 900px) {
     nav .links { display: none; }
-    .exp-card, .exp-card:nth-child(4), .exp-card:nth-child(5) { grid-column: span 3; }
-    .exp-card:nth-child(5) { grid-column: span 6; }
-    .train-grid { grid-template-columns: 1fr; }
+    .exp-card { grid-column: span 3; }
     .talk.featured { grid-template-columns: 1fr; }
     .talk.featured .talk-body { padding: 26px; }
     .contact-box { grid-template-columns: 1fr; padding: 48px 32px; }
@@ -327,7 +372,7 @@
     .about-grid { grid-template-columns: 1fr; gap: 28px; }
     .about-photo { width: 140px; }
     .exp-grid, .work-grid, .talks-grid { grid-template-columns: 1fr; }
-    .exp-card, .exp-card:nth-child(4), .exp-card:nth-child(5) { grid-column: auto; }
+    .exp-card { grid-column: auto; }
     .contact-box { padding: 40px 24px; border-radius: 18px; }
   }
 </style>
@@ -339,9 +384,8 @@
   <div class="wrap">
     <a class="logo" href="#top" aria-label="Bhatt Engineering, back to top">
       <svg viewBox="0 0 64 64" aria-hidden="true">
-        <path d="M20 12V52M20 30H36A11 11 0 0 1 36 52H20" fill="none" stroke="#efe7d6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="20" cy="12" r="5.5" fill="#e8b04b" stroke="#14110d" stroke-width="2.5"/>
-        <circle cx="47" cy="41" r="5.5" fill="#e8b04b" stroke="#14110d" stroke-width="2.5"/>
+        <path d="M18 6V52" fill="none" stroke="#efe7d6" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M18 37H48A15 15 0 1 0 43.6 47.6" fill="none" stroke="#e8b04b" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       <span class="wordmark"><b>bhatt</b><span>engineering</span></span>
     </a>
@@ -349,7 +393,6 @@
       <a href="#trainings">Trainings</a>
       <a href="#about">About</a>
       <a href="#expertise">Expertise</a>
-      <a href="#work">Work</a>
       <a href="#stack">Stack</a>
       <a href="#talks">Talks</a>
     </div>
@@ -391,26 +434,105 @@
     <div class="reveal">
       <div class="label">01 / Trainings</div>
       <h2 class="section-title">Trainings &amp; walkthroughs</h2>
-      <p class="section-sub">Hands-on videos from my YouTube channel. The player below always shows the latest uploads; use the playlist icon in the player to browse them all.</p>
+      <p class="section-sub">Hands-on videos and courses from my YouTube channel on LLM apps, RAG and AI for networks, built for production rather than demos. Scroll sideways to see them all.</p>
     </div>
-    <div class="train-grid reveal">
-      <div class="player">
-        <iframe src="https://www.youtube.com/embed/videoseries?list=UUGZUFgtdxAkUIyiS-YU9XpQ" title="Kamal Bhatt YouTube channel uploads" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <div class="train-bar reveal">
+      <div class="train-topics">
+        <span class="skill-pill">RAG</span>
+        <span class="skill-pill">LLMs</span>
+        <span class="skill-pill">Knowledge graphs</span>
+        <span class="skill-pill">Network anomaly detection</span>
       </div>
-      <div class="train-text">
-        <h3>Learn by building</h3>
-        <p>Practical sessions on network automation, SONiC and agentic AI for infrastructure, recorded so you can follow along at your own pace.</p>
-        <div class="train-topics">
-          <span class="skill-pill">SONiC</span>
-          <span class="skill-pill">Ansible</span>
-          <span class="skill-pill">Network automation</span>
-          <span class="skill-pill">Agentic AI</span>
-        </div>
-        <div class="train-actions">
-          <a class="btn solid" href="https://www.youtube.com/@kamalbhatt7342?sub_confirmation=1">Subscribe on YouTube</a>
-          <a class="btn" href="https://www.youtube.com/@kamalbhatt7342/videos">All videos <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
-        </div>
+      <div class="rail-nav">
+        <button class="rail-btn" type="button" data-dir="-1" aria-label="Scroll videos left" aria-controls="video-rail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <button class="rail-btn" type="button" data-dir="1" aria-label="Scroll videos right" aria-controls="video-rail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
       </div>
+    </div>
+  </div>
+  <div class="rail-outer reveal">
+    <ul class="rail" id="video-rail" tabindex="0" aria-label="Training videos">
+      <li class="rail-card">
+        <div class="video-wrap" data-vid="2hiE9TLFu5g" data-title="Knowledge Graphs vs Vector Databases: Is Vector DB Really Dead?">
+          <img src="https://i.ytimg.com/vi/2hiE9TLFu5g/hqdefault.jpg" alt="" loading="lazy">
+          <button class="video-play-btn" type="button" aria-label="Play video: Knowledge Graphs vs Vector Databases: Is Vector DB Really Dead?"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg></span></button>
+        </div>
+        <div class="rail-body"><h3>Knowledge Graphs vs Vector Databases: Is Vector DB Really Dead?</h3></div>
+      </li>
+      <li class="rail-card">
+        <div class="video-wrap" data-vid="XYIIdJq6aac" data-title="How to Shrink Huge LLMs to run on Laptop.">
+          <img src="https://i.ytimg.com/vi/XYIIdJq6aac/hqdefault.jpg" alt="" loading="lazy">
+          <button class="video-play-btn" type="button" aria-label="Play video: How to Shrink Huge LLMs to run on Laptop."><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg></span></button>
+        </div>
+        <div class="rail-body"><h3>How to Shrink Huge LLMs to run on Laptop.</h3></div>
+      </li>
+      <li class="rail-card">
+        <div class="video-wrap" data-vid="QoL234ZbFWI" data-title="I Built Production Grade Backend for LLM Apps. | Async Network Anomaly Detection">
+          <img src="https://i.ytimg.com/vi/QoL234ZbFWI/hqdefault.jpg" alt="" loading="lazy">
+          <button class="video-play-btn" type="button" aria-label="Play video: I Built Production Grade Backend for LLM Apps. | Async Network Anomaly Detection"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg></span></button>
+        </div>
+        <div class="rail-body"><h3>I Built Production Grade Backend for LLM Apps. | Async Network Anomaly Detection</h3></div>
+      </li>
+      <li class="rail-card">
+        <div class="video-wrap" data-vid="uL0S28DhidY" data-title="RAG Series Part 1 - RAG is 90% Retrieval: The Part Most Developers Miss">
+          <img src="https://i.ytimg.com/vi/uL0S28DhidY/hqdefault.jpg" alt="" loading="lazy">
+          <span class="rail-badge">RAG course · Part 1</span>
+          <button class="video-play-btn" type="button" aria-label="Play video: RAG Series Part 1 - RAG is 90% Retrieval: The Part Most Developers Miss"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg></span></button>
+        </div>
+        <div class="rail-body"><h3>RAG Series Part 1 - RAG is 90% Retrieval: The Part Most Developers Miss</h3></div>
+      </li>
+      <li class="rail-card">
+        <div class="video-wrap" data-vid="pGCc5pIwxlQ" data-title="RAG Series Part 2 - The RAG Secret: How to Create PERFECT Chunks for 10x Accuracy">
+          <img src="https://i.ytimg.com/vi/pGCc5pIwxlQ/hqdefault.jpg" alt="" loading="lazy">
+          <span class="rail-badge">RAG course · Part 2</span>
+          <button class="video-play-btn" type="button" aria-label="Play video: RAG Series Part 2 - The RAG Secret: How to Create PERFECT Chunks for 10x Accuracy"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg></span></button>
+        </div>
+        <div class="rail-body"><h3>RAG Series Part 2 - The RAG Secret: How to Create PERFECT Chunks for 10x Accuracy</h3></div>
+      </li>
+      <li class="rail-card">
+        <div class="video-wrap" data-vid="vqcKkZiKZII" data-title="RAG Series Part 3 - SOTA RAG Retrieval: BM25, Reranking, &amp; Query Expansion Explained">
+          <img src="https://i.ytimg.com/vi/vqcKkZiKZII/hqdefault.jpg" alt="" loading="lazy">
+          <span class="rail-badge">RAG course · Part 3</span>
+          <button class="video-play-btn" type="button" aria-label="Play video: RAG Series Part 3 - SOTA RAG Retrieval: BM25, Reranking, &amp; Query Expansion Explained"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg></span></button>
+        </div>
+        <div class="rail-body"><h3>RAG Series Part 3 - SOTA RAG Retrieval: BM25, Reranking, &amp; Query Expansion Explained</h3></div>
+      </li>
+      <li class="rail-card">
+        <div class="video-wrap" data-vid="bnnuJolkBEM" data-title="RAG Series Part 4 - Prompt Engineering, Context Window &amp; LLM Cost Optimization">
+          <img src="https://i.ytimg.com/vi/bnnuJolkBEM/hqdefault.jpg" alt="" loading="lazy">
+          <span class="rail-badge">RAG course · Part 4</span>
+          <button class="video-play-btn" type="button" aria-label="Play video: RAG Series Part 4 - Prompt Engineering, Context Window &amp; LLM Cost Optimization"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg></span></button>
+        </div>
+        <div class="rail-body"><h3>RAG Series Part 4 - Prompt Engineering, Context Window &amp; LLM Cost Optimization</h3></div>
+      </li>
+      <li class="rail-card">
+        <div class="video-wrap" data-vid="9g01cUBLqgA" data-title="RAG Series Part 5 - Mastering LLM Generation: Temperature, Top-P &amp; Penalties">
+          <img src="https://i.ytimg.com/vi/9g01cUBLqgA/hqdefault.jpg" alt="" loading="lazy">
+          <span class="rail-badge">RAG course · Part 5</span>
+          <button class="video-play-btn" type="button" aria-label="Play video: RAG Series Part 5 - Mastering LLM Generation: Temperature, Top-P &amp; Penalties"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg></span></button>
+        </div>
+        <div class="rail-body"><h3>RAG Series Part 5 - Mastering LLM Generation: Temperature, Top-P &amp; Penalties</h3></div>
+      </li>
+      <li class="rail-card">
+        <div class="video-wrap" data-vid="lBnO1BKss4E" data-title="RAG Series Part 6 - How to Tune Your AI Pipeline: Orchestration, Caching &amp; Latency">
+          <img src="https://i.ytimg.com/vi/lBnO1BKss4E/hqdefault.jpg" alt="" loading="lazy">
+          <span class="rail-badge">RAG course · Part 6</span>
+          <button class="video-play-btn" type="button" aria-label="Play video: RAG Series Part 6 - How to Tune Your AI Pipeline: Orchestration, Caching &amp; Latency"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg></span></button>
+        </div>
+        <div class="rail-body"><h3>RAG Series Part 6 - How to Tune Your AI Pipeline: Orchestration, Caching &amp; Latency</h3></div>
+      </li>
+      <li class="rail-card rail-more">
+        <a href="https://www.youtube.com/@kamalbhatt7342/videos">
+          <span class="more-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4"/><polygon points="10 9 15 12 10 15 10 9"/></svg></span>
+          <strong>All videos on YouTube</strong>
+          <span>youtube.com/@kamalbhatt7342 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="wrap">
+    <div class="train-actions reveal">
+      <a class="btn solid" href="https://www.youtube.com/@kamalbhatt7342?sub_confirmation=1">Subscribe on YouTube</a>
+      <a class="btn" href="https://www.youtube.com/@kamalbhatt7342/videos">All videos <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
     </div>
   </div>
 </section>
@@ -447,18 +569,20 @@
     <div class="reveal">
       <div class="label">03 / Expertise</div>
       <h2 class="section-title">Where the depth is</h2>
-      <p class="section-sub">Five areas of hands-on depth, each built through production work rather than coursework or theory.</p>
+      <p class="section-sub">Six areas of hands-on depth, each built through production work during my engineering roles, most recently at STORDIS GmbH, not through coursework or theory.</p>
     </div>
     <div class="exp-grid">
       <article class="exp-card reveal">
         <div class="exp-top"><span class="exp-tag">AI / ML</span><span class="exp-num">01</span></div>
         <h3>AI Agent Systems &amp; LLM Orchestration</h3>
         <p>Designing and operating multi-agent AI platforms end to end: provider-agnostic LLM routing, retrieval engines built from scratch, and human-in-the-loop guardrails in front of any automated action.</p>
+        <div class="exp-proof">Production multi-agent workflow system with a dependency-free TF-IDF retrieval engine</div>
       </article>
       <article class="exp-card reveal">
         <div class="exp-top"><span class="exp-tag">NETWORKING</span><span class="exp-num">02</span></div>
         <h3>SDN &amp; Programmable Infrastructure</h3>
         <p>Designing abstraction layers, APIs, and controllers that expose programmable network hardware to applications, including fault-tolerant SDN systems built for real traffic, not demos.</p>
+        <div class="exp-proof">Open-source SDN controller on a P4 data plane for the broadcast shift from SDI to IP</div>
       </article>
       <article class="exp-card reveal">
         <div class="exp-top"><span class="exp-tag">SYSTEMS</span><span class="exp-num">03</span></div>
@@ -469,56 +593,26 @@
         <div class="exp-top"><span class="exp-tag">OBSERVABILITY</span><span class="exp-num">04</span></div>
         <h3>Telemetry &amp; Monitoring at Scale</h3>
         <p>Building monitoring and telemetry tooling, from protocol-level data collection across thousands of remote elements to AI-driven anomaly detection that flags drift before it becomes an outage.</p>
+        <div class="exp-proof">Open-source metrics exporter and agentless AIOps pipeline · ~42 GitHub stars</div>
       </article>
       <article class="exp-card reveal">
         <div class="exp-top"><span class="exp-tag">LEADERSHIP</span><span class="exp-num">05</span></div>
         <h3>Hands-On Engineering Leadership</h3>
         <p>Leading small, cross-site engineering teams through architecture, code review, and production on-call, staying hands-on with the code rather than delegating it away.</p>
       </article>
-    </div>
-  </div>
-</section>
-
-<section id="work">
-  <div class="wrap">
-    <div class="reveal">
-      <div class="label">04 / Depth &amp; Evidence</div>
-      <h2 class="section-title">Skills proven in production, not just claimed</h2>
-      <p class="section-sub">Built during my engineering roles, most recently at STORDIS GmbH; shown here as evidence of hands-on skill, not as independent commercial work.</p>
-    </div>
-    <div class="work-grid">
-      <article class="work-card reveal">
-        <div class="work-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-        <h3>Telemetry &amp; AIOps Tooling</h3>
-        <p>Open-source network telemetry tooling: a custom metrics exporter streaming live switch state, and an agentless pipeline using AI-driven anomaly detection to flag configuration drift and predict hardware failure.</p>
-        <div class="meta">Open source · ~42 GitHub stars</div>
-      </article>
-      <article class="work-card reveal">
-        <div class="work-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M10.8 7.2 6.2 16.8M13.2 7.2l4.6 9.6M7.5 19h9"/></svg></div>
-        <h3>Multi-Agent AI Orchestration</h3>
-        <p>A multi-agent workflow system with provider-agnostic LLM routing, a dependency-free retrieval engine (TF-IDF and cosine similarity) built from scratch, and human-in-the-loop guardrails requiring confirmation before any state-changing action.</p>
-        <div class="meta">Production system</div>
-      </article>
-      <article class="work-card reveal">
-        <div class="work-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><path d="M7 7h.01M7 17h.01M11 7h6M11 17h6"/></svg></div>
-        <h3>SDN Controller Design</h3>
-        <p>Built for the broadcasting industry's shift from SDI to IP networking: fault tolerance, traffic engineering, QoS and multicast forwarding on a P4-programmable data plane.</p>
-        <div class="meta">Open source</div>
-      </article>
-      <article class="work-card reveal">
-        <div class="work-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"/><path d="M7.5 15h9"/></svg></div>
+      <article class="exp-card reveal">
+        <div class="exp-top"><span class="exp-tag">TESTING</span><span class="exp-num">06</span></div>
         <h3>Protocol Validation &amp; Test Tooling</h3>
         <p>A notebook-based testing environment for validating network configuration protocols (RESTConf, OpenConfig) and prototyping routing behavior directly against live hardware.</p>
-        <div class="meta">Internal tooling</div>
+        <div class="exp-proof">Internal tooling, run directly against live hardware</div>
       </article>
     </div>
-    <p class="more reveal">More on <a href="https://github.com/kamalkrbh">github.com/kamalkrbh</a> →</p>
   </div>
 </section>
 
 <section id="stack">
   <div class="wrap reveal">
-    <div class="label">05 / Stack</div>
+    <div class="label">04 / Stack</div>
     <h2 class="section-title">Tools &amp; technologies</h2>
     <p class="section-sub">What I reach for day to day, grouped by where it sits in the system.</p>
     <div class="skill-group">
@@ -562,7 +656,7 @@
 <section id="talks">
   <div class="wrap">
     <div class="reveal">
-      <div class="label">06 / Talks &amp; Appearances</div>
+      <div class="label">05 / Talks &amp; Appearances</div>
       <h2 class="section-title">Talks, masterclasses &amp; interviews</h2>
       <p class="section-sub">Conference talks at the Open Compute Project and CLOUDFEST, plus appearances as STORDIS's open networking and SONiC expert.</p>
     </div>
@@ -655,9 +749,8 @@
   <div class="wrap footer-grid">
     <a class="logo" href="#top" aria-label="Back to top">
       <svg viewBox="0 0 64 64" aria-hidden="true">
-        <path d="M20 12V52M20 30H36A11 11 0 0 1 36 52H20" fill="none" stroke="#efe7d6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="20" cy="12" r="5.5" fill="#e8b04b" stroke="#14110d" stroke-width="2.5"/>
-        <circle cx="47" cy="41" r="5.5" fill="#e8b04b" stroke="#14110d" stroke-width="2.5"/>
+        <path d="M18 6V52" fill="none" stroke="#efe7d6" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M18 37H48A15 15 0 1 0 43.6 47.6" fill="none" stroke="#e8b04b" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       <span class="wordmark"><b>bhatt</b><span>engineering</span></span>
     </a>
@@ -666,16 +759,68 @@
 </footer>
 
 <script>
-  document.querySelectorAll('.video-wrap[data-vid]').forEach(function(w){
-    w.querySelector('.video-play-btn').addEventListener('click', function(){
-      var f = document.createElement('iframe');
-      f.src = 'https://www.youtube.com/embed/' + w.dataset.vid + '?autoplay=1';
-      f.title = w.dataset.title;
-      f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-      f.allowFullscreen = true;
-      w.replaceChildren(f);
-    });
+  // Click-to-play for every video thumbnail (also ones added later)
+  document.addEventListener('click', function(ev){
+    var btn = ev.target.closest('.video-play-btn'); if (!btn) return;
+    var w = btn.closest('.video-wrap[data-vid]'); if (!w) return;
+    if (location.protocol === 'file:') { window.open('https://www.youtube.com/watch?v=' + w.dataset.vid, '_blank', 'noopener'); return; }
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + w.dataset.vid + '?autoplay=1&rel=0';
+    f.title = w.dataset.title;
+    f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+    f.allowFullscreen = true;
+    w.replaceChildren(f);
   });
+
+  // Trainings rail: load the channel's videos from videos.json (kept up to date by a GitHub Action)
+  (function(){
+    var rail = document.getElementById('video-rail'); if (!rail) return;
+    var prev = document.querySelector('.rail-btn[data-dir="-1"]'), next = document.querySelector('.rail-btn[data-dir="1"]');
+    function step(){ var c = rail.querySelector('.rail-card'); return c ? c.getBoundingClientRect().width + 18 : 320; }
+    function update(){
+      var max = rail.scrollWidth - rail.clientWidth - 2;
+      prev.disabled = rail.scrollLeft <= 2; next.disabled = rail.scrollLeft >= max;
+      document.querySelector('.rail-nav').hidden = max <= 0;
+    }
+    [prev, next].forEach(function(b){ b.addEventListener('click', function(){ rail.scrollBy({ left: step() * +b.dataset.dir * (window.innerWidth > 720 ? 2 : 1) }); }); });
+    rail.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    rail.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowRight') { rail.scrollBy({ left: step() }); e.preventDefault(); }
+      if (e.key === 'ArrowLeft') { rail.scrollBy({ left: -step() }); e.preventDefault(); }
+    });
+    update();
+
+    function el(tag, cls, text){ var n = document.createElement(tag); if (cls) n.className = cls; if (text) n.textContent = text; return n; }
+    function card(v){
+      var li = el('li', 'rail-card');
+      var w = el('div', 'video-wrap'); w.dataset.vid = v.id; w.dataset.title = v.title;
+      var img = el('img'); img.src = 'https://i.ytimg.com/vi/' + encodeURIComponent(v.id) + '/hqdefault.jpg'; img.alt = ''; img.loading = 'lazy';
+      var b = el('button', 'video-play-btn'); b.type = 'button'; b.setAttribute('aria-label', 'Play video: ' + v.title);
+      b.innerHTML = '<span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg></span>';
+      w.append(img);
+      if (v.series) w.append(el('span', 'rail-badge', v.series));
+      w.append(b);
+      var body = el('div', 'rail-body'); body.append(el('h3', '', v.title));
+      if (v.published) {
+        var d = new Date(v.published + 'T00:00:00');
+        var tm = el('time', '', d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }));
+        tm.dateTime = v.published; body.append(tm);
+      }
+      li.append(w, body); return li;
+    }
+    fetch('videos.json', { cache: 'no-cache' })
+      .then(function(r){ if (!r.ok) throw 0; return r.json(); })
+      .then(function(data){
+        var vids = (data && data.videos || []).filter(function(v){ return v && /^[\w-]{6,20}$/.test(v.id) && v.title; });
+        if (!vids.length) return;
+        var more = rail.querySelector('.rail-more');
+        rail.querySelectorAll('.rail-card:not(.rail-more)').forEach(function(n){ n.remove(); });
+        vids.forEach(function(v){ rail.insertBefore(card(v), more); });
+        update();
+      })
+      .catch(function(){ /* keep the built-in cards */ });
+  })();
   document.getElementById('yr').textContent = new Date().getFullYear();
   (function(){
     var els = document.querySelectorAll('.reveal');
