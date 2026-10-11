@@ -76,6 +76,8 @@
   }
   nav .links a:hover { color: var(--text); }
   nav .links a:hover::after { transform: scaleX(1); }
+  nav .links a.active { color: var(--accent); }
+  nav .links a.active::after { transform: scaleX(1); }
 
   /* ---------- Buttons ---------- */
   .btn {
@@ -827,6 +829,33 @@
       .catch(function(){ /* keep the built-in cards */ });
   })();
   document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // Scroll-spy: underline the menu item of the section currently in view
+  (function(){
+    var links = [].slice.call(document.querySelectorAll('nav .links a[href^="#"]'));
+    var items = links.map(function(a){ return { a: a, s: document.querySelector(a.getAttribute('href')) }; })
+                     .filter(function(x){ return x.s; });
+    if (!items.length) return;
+    var ticking = false;
+    function spy(){
+      ticking = false;
+      var line = window.innerHeight * 0.35;   // a section is "in focus" once its top passes 35% of the screen
+      var current = null;
+      items.forEach(function(x){ if (x.s.getBoundingClientRect().top <= line) current = x; });
+      // at the very bottom of the page, highlight the last section
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) current = items[items.length - 1];
+      // past the last section (e.g. contact), keep nothing highlighted if it has scrolled away
+      if (current && current.s.getBoundingClientRect().bottom < line && current === items[items.length - 1]) current = null;
+      items.forEach(function(x){
+        var on = x === current;
+        x.a.classList.toggle('active', on);
+        if (on) x.a.setAttribute('aria-current', 'location'); else x.a.removeAttribute('aria-current');
+      });
+    }
+    window.addEventListener('scroll', function(){ if (!ticking) { ticking = true; requestAnimationFrame(spy); } }, { passive: true });
+    window.addEventListener('resize', spy);
+    spy();
+  })();
   (function(){
     var els = document.querySelectorAll('.reveal');
     if (!('IntersectionObserver' in window)) { els.forEach(function(e){ e.classList.add('in'); }); return; }
